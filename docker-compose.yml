@@ -1,6 +1,6 @@
 services:
   arti:
-    image: arti:latest
+    image: deathmond1987/arti-tor-bridges:latest
     hostname: arti
     container_name: arti_with_bridges
     ports:
@@ -8,4 +8,4 @@ services:
     environment:
       - "NUM_RELAYS=100"
       - "MIN_RELAYS=1"
-      - "RELAY_TIMEOUT=3"
+      - "RELAY_TIMEOUT=4"
