@@ -44,7 +44,7 @@ if [ ! -f "$BRIDGE_FILE" ]; then
     error "bridges not found"
     exit 1
 else 
-    sed '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "$CONFIG_FILE"
+    sed -i '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "$CONFIG_FILE"
 fi
 
 ## arti using toml configuration
