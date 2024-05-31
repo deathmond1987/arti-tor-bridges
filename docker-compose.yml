@@ -1,0 +1,10 @@
+services:
+  arti:
+    image: arti:latest
+    hostname: arti
+    ports:
+      - "9150:9150"
+    environment:
+      - "NUM_RELAYS=100"
+      - "MIN_RELAYS=1"
+      - "RELAY_TIMEOUT=3"
