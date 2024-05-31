@@ -40,12 +40,15 @@ cd /arti
 cp /arti/conf_example.toml /arti/arti_conf_example.toml
 
 ## remove generated config. it will be regenerated
-warn "remove config file"
-rm -f "${CONFIG_FILE}"
+
+if [ -f "${CONFIG_FILE}" ]; then
+    warn "remove config file. it will be regenerated"
+    rm -f "${CONFIG_FILE}"
+fi
 
 ## generating arti config
 create_config () {
-    success "populating config file"
+    success "generating config file"
     
     ## setup arti socket port
     warn "  set proxy port: ${SOCKS_LISTEN}"
@@ -53,7 +56,7 @@ create_config () {
     echo "socks_listen = ${SOCKS_LISTEN}" >> "${CONFIG_FILE}"
 
     ## setup log sensitive information 
-    warn "set log sensitive information:"
+    warn "  set log sensitive information:"
     echo "[logging]" >> "$CONFIG_FILE"
     echo "log_sensitive_information = ${SENSITIVE_LOG}" >> "${CONFIG_FILE}"
 }

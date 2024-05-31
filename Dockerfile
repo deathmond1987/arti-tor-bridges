@@ -63,6 +63,9 @@ COPY --chmod=755 ./entrypoint.sh /
 WORKDIR /arti
 ## set arti binary owner
 RUN chown arti:arti ./arti
+## set healthcheck
+HEALTHCHECK --interval=5m --retries=2 \
+            CMD if [ -f /arti/.scanner ]; then echo "arti starting...";  else curl --retry 4 --max-time 30 -xs --socks5-hostname 127.0.0.1:9150 'https://check.torproject.org' | tac | grep -qm1 Congratulations; fi || exit 1
 ## set workuser
 USER arti
 ## set entrypoint
