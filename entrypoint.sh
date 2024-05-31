@@ -27,9 +27,9 @@ MIN_RELAYS=${MIN_RELAYS:=1}
 RELAY_TIMEOUT=${RELAY_TIMEOUT:=3}
 
 ## print setup variables
-info "simultaneously scanning relays: ${NUM_RELAYS}"
-info "minimum number of relays before start arti: ${MIN_RELAYS}"
-info "timeout probing for single relay: ${RELAY_TIMEOUT}"
+warn "simultaneously scanning relays: ${NUM_RELAYS}"
+warn "minimum number of relays before start arti: ${MIN_RELAYS}"
+warn "timeout probing for single relay: ${RELAY_TIMEOUT}"
 
 cd /arti
 mkdir -p ./data
@@ -37,14 +37,24 @@ cp /arti/conf_example.toml /arti/data/arti_conf_example.toml
 
 ## searching open port from bridge list with tor-relay-scanner by valdikSS
 ## and write founded list to file
+<<<<<<< HEAD
 ./tor-relay-scanner -n "${NUM_RELAYS}" \
                     -g "${MIN_RELAYS}" \
                     --timeout "${RELAY_TIMEOUT}" > "$BRIDGE_FILE"
 if [ ! -f "$BRIDGE_FILE" ]; then
     error "bridges not found"
     exit 1
-else 
+else
     sed -i '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "$CONFIG_FILE"
+=======
+while [ ! -s "$BRIDGE_FILE" ]; do
+    ./tor-relay-scanner -n "${NUM_RELAYS}" \
+                        -g "${MIN_RELAYS}" \
+                        --timeout "${RELAY_TIMEOUT}" > "${BRIDGE_FILE}"
+done
+if [ -f "${CONFIG_FILE}"]
+    sed -i'/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
+>>>>>>> 6b6bba6 (scanner will search relays in loop)
 fi
 
 ## arti using toml configuration
@@ -53,20 +63,20 @@ echo "###SCANNER GEN###
 [bridges]
 
 enabled = true
-bridges =[" > "$CONFIG_FILE"
+bridges =[" > "${CONFIG_FILE}"
 
 ## from list of founded bridges copy strings to config file
 ## sed will change all lines to match toml
 ## (add   "Bridge  to start line and ", at the end)
-sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "$CONFIG_FILE"
+sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "${CONFIG_FILE}"
 
 ## closing toml config
 echo "]
-###END SCANNER GEN###" >> "$CONFIG_FILE"
+###END SCANNER GEN###" >> "${CONFIG_FILE}"
 
 ## prepare to takeoff
-success "number of relays scanner found: $(wc -l < $BRIDGE_FILE)"
-## delete useles file 
-rm -f "$BRIDGE_FILE"
+success "number of relays scanner found: $(wc -l < ${BRIDGE_FILE})"
+## delete useles file
+rm -f "${BRIDGE_FILE}"
 
 "$@"
