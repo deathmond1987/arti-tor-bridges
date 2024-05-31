@@ -43,7 +43,7 @@ FROM alpine:latest as release
 ## add sqlite-libc (needed for arti)
 ## add tini (zombies, run!)
 ## add curl (healthcheck)
-RUN apk update --no-cache && apk add libgcc sqlite-libs tini curl --no-cache
+RUN apk add libgcc sqlite-libs tini curl iptables --update --no-cache
 ## add user and group for app
 RUN addgroup -S arti && adduser -S arti -G arti
 ## add workdir
