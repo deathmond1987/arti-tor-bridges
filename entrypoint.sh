@@ -37,16 +37,6 @@ cp /arti/conf_example.toml /arti/data/arti_conf_example.toml
 
 ## searching open port from bridge list with tor-relay-scanner by valdikSS
 ## and write founded list to file
-<<<<<<< HEAD
-./tor-relay-scanner -n "${NUM_RELAYS}" \
-                    -g "${MIN_RELAYS}" \
-                    --timeout "${RELAY_TIMEOUT}" > "$BRIDGE_FILE"
-if [ ! -f "$BRIDGE_FILE" ]; then
-    error "bridges not found"
-    exit 1
-else
-    sed -i '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "$CONFIG_FILE"
-=======
 while [ ! -s "$BRIDGE_FILE" ]; do
     ./tor-relay-scanner -n "${NUM_RELAYS}" \
                         -g "${MIN_RELAYS}" \
@@ -54,7 +44,6 @@ while [ ! -s "$BRIDGE_FILE" ]; do
 done
 if [ -f "${CONFIG_FILE}"]
     sed -i'/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
->>>>>>> 6b6bba6 (scanner will search relays in loop)
 fi
 
 ## arti using toml configuration
