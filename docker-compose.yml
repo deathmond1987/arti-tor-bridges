@@ -9,3 +9,4 @@ services:
       - "NUM_RELAYS=200"
       - "MIN_RELAYS=3"
       - "RELAY_TIMEOUT=4"
+      - "SOCKS_LISTEN=9150"
