@@ -43,7 +43,7 @@ while [ ! -s "$BRIDGE_FILE" ]; do
                         --timeout "${RELAY_TIMEOUT}" > "${BRIDGE_FILE}"
 done
 if [ -f "${CONFIG_FILE}" ]; then
-    sed -i'/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
+    sed -i '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
 fi
 
 ## arti using toml configuration
