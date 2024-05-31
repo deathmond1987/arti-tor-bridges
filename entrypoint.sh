@@ -42,7 +42,7 @@ while [ ! -s "$BRIDGE_FILE" ]; do
                         -g "${MIN_RELAYS}" \
                         --timeout "${RELAY_TIMEOUT}" > "${BRIDGE_FILE}"
 done
-if [ -f "${CONFIG_FILE}"]
+if [ -f "${CONFIG_FILE}" ]; then
     sed -i'/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
 fi
 
