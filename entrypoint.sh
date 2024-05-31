@@ -20,11 +20,15 @@ warn() { printf "${tan}%s${reset}\n" "$@"
 ## script variables
 CONFIG_FILE=./arti-bridges.conf
 BRIDGE_FILE=./bridges
+LOCK_FILE=./.scanner
 
-## set variables
+## set tor relay scanner variables
 NUM_RELAYS=${NUM_RELAYS:=100}
 MIN_RELAYS=${MIN_RELAYS:=1}
 RELAY_TIMEOUT=${RELAY_TIMEOUT:=3}
+
+## set arti config default values
+SOCKS_LISTEN=${SOCKS_LISTEN:=9150}
 
 ## print setup variables
 warn "simultaneously scanning relays: ${NUM_RELAYS}"
@@ -32,40 +36,50 @@ warn "minimum number of relays before start arti: ${MIN_RELAYS}"
 warn "timeout probing for single relay: ${RELAY_TIMEOUT}"
 
 cd /arti
-mkdir -p ./data
 cp /arti/conf_example.toml /arti/data/arti_conf_example.toml
 
-## searching open port from bridge list with tor-relay-scanner by valdikSS
-## and write founded list to file
-while [ ! -s "$BRIDGE_FILE" ]; do
-    ./tor-relay-scanner -n "${NUM_RELAYS}" \
-                        -g "${MIN_RELAYS}" \
-                        --timeout "${RELAY_TIMEOUT}" > "${BRIDGE_FILE}"
-done
-if [ -f "${CONFIG_FILE}" ]; then
-    sed -i '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "${CONFIG_FILE}"
-fi
+create_config () {
+    echo "[proxy]" >> "$CONFIG_FILE"
+    echo "socks_listen = ${SOCKS_LISTEN}" >> "$CONFIG_FILE"
+}
 
-## arti using toml configuration
-## generating file top part
-echo "###SCANNER GEN###
-[bridges]
+launch_arti () {
+    ## creating lock file to temporary disable healthcheck
+    touch "${LOCK_FILE}"
+
+    ## searching open port from bridge list with tor-relay-scanner by valdikSS
+    ## and write founded list to file
+    while [ ! -s "$BRIDGE_FILE" ]; do
+        ./tor-relay-scanner -n "${NUM_RELAYS}" \
+                            -g "${MIN_RELAYS}" \
+                            --timeout "${RELAY_TIMEOUT}" > "${BRIDGE_FILE}"
+    done
+
+    ## arti using toml configuration
+    ## generating file top part
+    echo "[bridges]
 
 enabled = true
 bridges =[" > "${CONFIG_FILE}"
 
-## from list of founded bridges copy strings to config file
-## sed will change all lines to match toml
-## (add   "Bridge  to start line and ", at the end)
-sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "${CONFIG_FILE}"
+    ## from list of founded bridges copy strings to config file
+    ## sed will change all lines to match toml
+    ## (add   "Bridge  to start line and ", at the end)
+    sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "${CONFIG_FILE}"
 
-## closing toml config
-echo "]
-###END SCANNER GEN###" >> "${CONFIG_FILE}"
+    ## closing toml config
+    echo "]">> "${CONFIG_FILE}"
 
-## prepare to takeoff
-success "number of relays scanner found: $(wc -l < ${BRIDGE_FILE})"
-## delete useles file
-rm -f "${BRIDGE_FILE}"
+    create_config
 
-"$@"
+    ## prepare to takeoff
+    success "number of relays scanner found: $(wc -l < ${BRIDGE_FILE})"
+    ## delete useles file
+    rm -f "${BRIDGE_FILE}"
+    ## removing lock file to enable healthcheck
+    rm -f "${LOCK_FILE}"
+
+    "$@"
+}
+
+launch_arti "$@"
