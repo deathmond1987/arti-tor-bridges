@@ -2,6 +2,7 @@ services:
   arti:
     image: arti:latest
     hostname: arti
+    container_name: arti_with_bridges
     ports:
       - "9150:9150"
     environment:
