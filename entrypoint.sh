@@ -40,10 +40,17 @@ cp /arti/conf_example.toml /arti/data/arti_conf_example.toml
 ./tor-relay-scanner -n "${NUM_RELAYS}" \
                     -g "${MIN_RELAYS}" \
                     --timeout "${RELAY_TIMEOUT}" > "$BRIDGE_FILE"
+if [ ! -f "$BRIDGE_FILE" ]; then
+    error "bridges not found"
+    exit 1
+else 
+    sed '/###SCANNER GEN###/,/###END SCANNER GEN###/d' "$CONFIG_FILE"
+fi
 
 ## arti using toml configuration
 ## generating file top part
-echo "[bridges]
+echo "###SCANNER GEN###
+[bridges]
 
 enabled = true
 bridges =[" > "$CONFIG_FILE"
@@ -54,10 +61,12 @@ bridges =[" > "$CONFIG_FILE"
 sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "$CONFIG_FILE"
 
 ## closing toml config
-echo "]" >> "$CONFIG_FILE"
+echo "]
+###END SCANNER GEN###" >> "$CONFIG_FILE"
 
-## delete useles file 
-rm -f "$BRIDGE_FILE"
 ## prepare to takeoff
 success "number of relays scanner found: $(wc -l < $BRIDGE_FILE)"
+## delete useles file 
+rm -f "$BRIDGE_FILE"
+
 "$@"
