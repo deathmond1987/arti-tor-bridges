@@ -6,6 +6,6 @@ services:
     ports:
       - "9150:9150"
     environment:
-      - "NUM_RELAYS=100"
-      - "MIN_RELAYS=1"
+      - "NUM_RELAYS=200"
+      - "MIN_RELAYS=3"
       - "RELAY_TIMEOUT=4"
