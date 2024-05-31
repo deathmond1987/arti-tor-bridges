@@ -26,21 +26,36 @@ LOCK_FILE=./.scanner
 NUM_RELAYS=${NUM_RELAYS:=100}
 MIN_RELAYS=${MIN_RELAYS:=1}
 RELAY_TIMEOUT=${RELAY_TIMEOUT:=3}
-
+SENSITIVE_LOG=${SENSITIVE_LOG:=true}
 ## set arti config default values
 SOCKS_LISTEN=${SOCKS_LISTEN:=9150}
 
-## print setup variables
+## print tor scanner variables
 warn "simultaneously scanning relays: ${NUM_RELAYS}"
 warn "minimum number of relays before start arti: ${MIN_RELAYS}"
 warn "timeout probing for single relay: ${RELAY_TIMEOUT}"
 
 cd /arti
-cp /arti/conf_example.toml /arti/data/arti_conf_example.toml
+## copy config example to arti dir
+cp /arti/conf_example.toml /arti/arti_conf_example.toml
 
+## remove generated config. it will be regenerated
+warn "remove config file"
+rm -f "${CONFIG_FILE}"
+
+## generating arti config
 create_config () {
-    echo "[proxy]" >> "$CONFIG_FILE"
-    echo "socks_listen = ${SOCKS_LISTEN}" >> "$CONFIG_FILE"
+    success "populating config file"
+    
+    ## setup arti socket port
+    warn "  set proxy port: ${SOCKS_LISTEN}"
+    echo "[proxy]" >> "${CONFIG_FILE}"
+    echo "socks_listen = ${SOCKS_LISTEN}" >> "${CONFIG_FILE}"
+
+    ## setup log sensitive information 
+    warn "set log sensitive information:"
+    echo "[logging]" >> "$CONFIG_FILE"
+    echo "log_sensitive_information = ${SENSITIVE_LOG}" >> "${CONFIG_FILE}"
 }
 
 launch_arti () {
