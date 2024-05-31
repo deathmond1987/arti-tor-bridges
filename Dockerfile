@@ -13,7 +13,7 @@ RUN apk add cargo \
 ## cloning arti
 RUN git clone https://gitlab.torproject.org/tpo/core/arti.git
 ## set git dir as workdir
-WORKDIR arti
+WORKDIR /arti
 ## release kraken (build arti)
 RUN cargo build -p arti --locked --release
 #RUN cd ./examples/gsoc2023/connection-checker && cargo build -p connection-checker --locked --release
