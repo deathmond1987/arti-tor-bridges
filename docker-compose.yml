@@ -10,3 +10,6 @@ services:
       - "MIN_RELAYS=3"
       - "RELAY_TIMEOUT=4"
       - "SOCKS_LISTEN=9150"
+    cap_add:
+      - NET_ADMIN
+    network_mode: "host"

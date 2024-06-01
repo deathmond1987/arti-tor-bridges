@@ -60,7 +60,15 @@ create_config () {
     echo "[logging]" >> "$CONFIG_FILE"
     echo "log_sensitive_information = ${SENSITIVE_LOG}" >> "${CONFIG_FILE}"
 
-#    iptables -t nat -A PREROUTING -p tcp --dport ${SOCKS_LISTEN} -j DNAT --to-destination 127.0.0.1:${SOCKS_LISTEN}
+    ## temporary enable working as root
+    warn "enable arti work from root user !!! remove me, please"
+    echo "[application]" >> "${CONFIG_FILE}"
+    echo "allow_running_as_root = true" >> "${CONFIG_FILE}"
+
+    ## set all packets as localhost packets
+    ## cap net admin
+    warn "  set iptables rules to route all packets as localhost packets"
+    iptables -t nat -A PREROUTING -p tcp --dport "${SOCKS_LISTEN}" -j DNAT --to-destination 127.0.0.1:"${SOCKS_LISTEN}"
 }
 
 launch_arti () {
