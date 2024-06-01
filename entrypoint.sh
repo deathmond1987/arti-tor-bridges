@@ -85,10 +85,12 @@ launch_arti () {
 
     ## arti using toml configuration
     ## generating file top part
-    echo "[bridges]
+    cat <<-EOF > "${CONFIG_FILE}"
+    [bridges]
 
-enabled = true
-bridges =[" > "${CONFIG_FILE}"
+    enabled = true
+    bridges =[
+EOF
 
     ## from list of founded bridges copy strings to config file
     ## sed will change all lines to match toml
@@ -96,8 +98,9 @@ bridges =[" > "${CONFIG_FILE}"
     sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "${CONFIG_FILE}"
 
     ## closing toml config
-    echo "]">> "${CONFIG_FILE}"
-
+    "cat <<-EOF >> "${CONFIG_FILE}"
+    ]
+EOF
     create_config
 
     ## prepare to takeoff
