@@ -98,7 +98,7 @@ EOF
     sed 's/^/  "Bridge /; s/$/",/' "$BRIDGE_FILE" | tee -a "${CONFIG_FILE}"
 
     ## closing toml config
-    "cat <<-EOF >> "${CONFIG_FILE}"
+    cat <<-EOF >> "${CONFIG_FILE}"
     ]
 EOF
     create_config
