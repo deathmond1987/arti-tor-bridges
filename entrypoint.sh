@@ -60,9 +60,7 @@ create_config () {
     echo "[logging]" >> "$CONFIG_FILE"
     echo "log_sensitive_information = ${SENSITIVE_LOG}" >> "${CONFIG_FILE}"
 
-    ## set listen address 0.0.0.0
-    warn "set prepouting. arti itself listen only 127.0.0.01"
-    iptables -t nat -A PREROUTING -p tcp --dport ${SOCKS_LISTEN} -j DNAT --to-destination 127.0.0.1:${SOCKS_LISTEN}
+#    iptables -t nat -A PREROUTING -p tcp --dport ${SOCKS_LISTEN} -j DNAT --to-destination 127.0.0.1:${SOCKS_LISTEN}
 }
 
 launch_arti () {
