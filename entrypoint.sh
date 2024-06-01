@@ -101,6 +101,10 @@ bridges =[" > "${CONFIG_FILE}"
     create_config
 
     ## prepare to takeoff
+    
+    ## fixing permissions
+    chown arti:arti "${CONFIG_FILE}"
+    
     success "number of relays scanner found: $(wc -l < ${BRIDGE_FILE})"
     ## delete useles file
     rm -f "${BRIDGE_FILE}"
